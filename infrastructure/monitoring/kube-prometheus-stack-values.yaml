@@ -1,0 +1,50 @@
+# Disable some components we might not need initially
+prometheus:
+  prometheusSpec:
+    retention: 10d
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 10Gi
+
+grafana:
+  enabled: true
+  adminPassword: "admin"
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: true
+    hosts:
+      - grafana.app.local
+    tls:
+      - secretName: grafana-tls
+        hosts:
+          - grafana.app.local
+
+# Disable some default alerts and rules
+defaultRules:
+  disabled:
+    KubeProxyDown: true
+    KubeJobFailed: true
+
+# Reduce resource requests for smaller clusters
+prometheus-node-exporter:
+  resources:
+    limits:
+      cpu: 200m
+      memory: 50Mi
+    requests:
+      cpu: 100m
+      memory: 30Mi
+
+kube-state-metrics:
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
