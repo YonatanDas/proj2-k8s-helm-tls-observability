@@ -17,12 +17,8 @@ This project uses [Podinfo](https://github.com/stefanprodan/podinfo) as a sample
 - [Quick Start](#quick-start)
 - [Project Structure](#project-structure)
 - [Components](#components)
-- [Accessing Services](#accessing-services)
 - [Customization](#customization)
-- [Troubleshooting](#troubleshooting)
 - [Cleanup](#cleanup)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Prerequisites
 
@@ -197,10 +193,6 @@ Then open http://localhost:9090 in your browser.
 ### Certificate Configuration
 - Update `k8s-addons/cert-manager/` files for production certificates
 - Modify `k8s-addons/podinfo-certificate.yaml` for custom domains
-
-## Troubleshooting
-
-See [docs/troubleshooting.md](docs/troubleshooting.md) for common issues and solutions.
 
 ## Cleanup
 
