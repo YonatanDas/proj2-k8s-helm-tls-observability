@@ -1,0 +1,13 @@
+apiVersion: v2
+name: podinfo
+description: A Helm chart for Podinfo
+version: 0.1.0
+appVersion: 6.5.0
+keywords:
+  - podinfo
+  - microservice
+  - demo
+maintainers:
+  - name: Yonatan Desaleyn
+    email: yonatan804@gmail.com
+    url: https://github.com/YonatanDas

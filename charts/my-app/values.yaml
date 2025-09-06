@@ -1,0 +1,143 @@
+# podinfo-values.yaml
+
+# Reuse existing values from the current release
+replicaCount: 3
+
+# Image configuration
+image:
+  repository: ghcr.io/stefanprodan/podinfo
+  tag: 6.5.0
+  pullPolicy: IfNotPresent
+
+# Health check configuration
+livenessProbe:
+  path: /healthz
+  port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
+
+readinessProbe:
+  path: /readyz
+  port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
+
+# Metrics configuration
+metrics:
+  enabled: true
+  port: 9797
+
+# Service configuration
+service:
+  port: 9898
+  targetPort: http
+  type: ClusterIP
+
+# Ingress configuration
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: selfsigned-issuer
+  hosts:
+    - host: podinfo.app.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: podinfo-tls
+      hosts:
+        - podinfo.app.local
+
+# Enable ServiceMonitor for Prometheus
+serviceMonitor:
+  enabled: true
+  interval: 15s
+  additionalLabels:
+    release: kube-prometheus-stack
+
+# Keep existing security context
+securityContext:
+  enabled: true
+  capabilities:
+    drop:
+    - ALL
+  fsGroup: 2000
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+
+# Keep existing resources
+resources:
+  limits:
+    cpu: 500m
+    memory: 128Mi
+  requests:
+    cpu: 200m
+    memory: 64Mi
+
+# Keep existing probes
+probes:
+  readiness:
+    initialDelaySeconds: 5
+    periodSeconds: 5
+  liveness:
+    initialDelaySeconds: 30
+    periodSeconds: 10
+
+# Keep existing HPA configuration
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 70
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+
+# Keep existing pod disruption budget
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 2
+
+# Keep existing pod anti-affinity
+podAntiAffinity: true
+
+# Keep existing environment variables
+env:
+- name: ENVIRONMENT
+  value: production
+- name: LOG_LEVEL
+  value: info
+- name: REQUEST_TIMEOUT
+  value: 30s
+
+# Keep existing ingress configuration
+ingress:
+  enabled: true
+  annotations:
+    cert-manager.io/cluster-issuer: selfsigned-issuer
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  hosts:
+  - host: podinfo.app.local
+    paths:
+    - path: /
+      pathType: Prefix
+  tls:
+  - hosts:
+    - podinfo.app.local
+    secretName: podinfo-tls
